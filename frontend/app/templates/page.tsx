@@ -51,38 +51,6 @@ const TemplatesTab: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
 
-  const handleDownload = async (template: Template) => {
-    const container = document.createElement("div");
-    container.style.position = "absolute";
-    container.style.left = "-9999px";
-    document.body.appendChild(container);
-
-    const TemplateComponent = template.component;
-    const tempRoot = (
-      <div style={{ width: "794px", padding: "20px", background: "white" }}>
-        <TemplateComponent data={resumeData as Resume} />
-      </div>
-    );
-
-    const { createRoot } = await import("react-dom/client");
-    const root = createRoot(container);
-    root.render(tempRoot);
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    const canvas = await html2canvas(container, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${template.name.replace(/\s+/g, "_")}_Resume.pdf`);
-
-    root.unmount();
-    document.body.removeChild(container);
-  };
-
   const handleExportToEditor = () => {
     // Save data in localStorage
     // localStorage.setItem("resumeData", JSON.stringify(resumeData));
@@ -140,12 +108,6 @@ const TemplatesTab: React.FC = () => {
                             onClick={() => setSelectedTemplate(template)}
                           >
                             Preview
-                          </button>
-                          <button
-                            className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200 text-sm font-semibold"
-                            onClick={() => handleDownload(template)}
-                          >
-                            Download
                           </button>
                           <button
                             className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200 text-sm font-semibold"

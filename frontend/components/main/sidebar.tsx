@@ -141,14 +141,14 @@ export default function Sidebar({
             >
               Dashboard
             </NavItem>
-            <NavItem
+            {/* <NavItem
               icon={<FilePlus2 />}
               href="/generate-resume"
               active={pathname === "/generate-resume"}
               isCollapsed={isCollapsed}
             >
               Generate Resume
-            </NavItem>
+            </NavItem> */}
             <NavItem
               icon={<FileText />}
               href="/resume-editor"
