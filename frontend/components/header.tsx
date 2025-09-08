@@ -4,12 +4,13 @@ import { Logo } from '@/components/logo'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import React from 'react'
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { cn } from '@/lib/utils'
 
 const menuItems = [
+    { name: 'Home', href: '/' },
     { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About', href: '/about' },
+    { name: 'Team', href: '#team' },
 ]
 
 const HeroHeader = () => {
@@ -23,6 +24,7 @@ const HeroHeader = () => {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+    const { user, isLoaded } = useUser();
     return (
         <header>
             <nav
@@ -77,31 +79,46 @@ const HeroHeader = () => {
                             </div>
                             {/* Keep existing buttons, just wire to Clerk routes */}
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    size="sm"
-                                    className={cn(isScrolled && 'lg:hidden')}>
-                                    <Link href="/sign-in">
-                                        <span>Login</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn(isScrolled && 'lg:hidden')}>
-                                    <Link href="/sign-up">
-                                        <span>Sign Up</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn(isScrolled ? 'lg:inline-flex' : 'hidden')}>
-                                    <Link href="/Dashboard">
-                                        <span>Get Started</span>
-                                    </Link>
-                                </Button>
+                                <SignedOut>
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className={cn(isScrolled && 'lg:hidden')}>
+                                        <Link href="/sign-in">
+                                            <span>Login</span>
+                                        </Link>
+                                    </Button>
+                                    <Button
+                                        asChild
+                                        size="sm"
+                                        className={cn(isScrolled && 'lg:hidden')}>
+                                        <Link href="/sign-up">
+                                            <span>Sign Up</span>
+                                        </Link>
+                                    </Button>
+                                    <Button
+                                        asChild
+                                        size="sm"
+                                        className={cn(isScrolled ? 'lg:inline-flex' : 'hidden')}>
+                                        <Link href="/dashboard">
+                                            <span>Get Started</span>
+                                        </Link>
+                                    </Button>
+                                </SignedOut>
+                                <SignedIn>
+                                    <div className="flex items-center gap-2">
+                                        {(() => {
+                                            if (!isLoaded) return <span>Loading...</span>;
+                                            return (
+                                                <>
+                                                    <span className="font-medium text-sm">{user?.firstName || user?.username || "User"}</span>
+                                                    <UserButton afterSignOutUrl="/" />
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+                                </SignedIn>
                             </div>
                         </div>
                     </div>
